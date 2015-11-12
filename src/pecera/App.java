@@ -13,96 +13,123 @@ import acm.program.GraphicsProgram;
  *
  */
 public class App extends GraphicsProgram {
+    /**
+     * ID de la clase.
+     */
+    private static final long serialVersionUID = -6604079658293550567L;
+    /**
+     * Imagenes a usar.
+     */
+    private String[] array = { "macho_pez.png", "hembra_pez.png" };
+    /**
+     * Pecera.
+     */
+    private Pecera pecera;
+    /**
+     * Cantidad fija de peces a crear.
+     */
+    private static final int CANTIDAD = 25;
+    /**
+     * Cuantos milisegundos pausara el juego.
+     */
+    private static final int PAUSA = 50;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6604079658293550567L;
-	/**
-	 * Imagenes a usar.
-	 */
-	private String[] array = { "macho_pez.png", "hembra_pez.png" };
-	/**
-	 * Pecera.
-	 */
-	private Pecera pecera;
+    /**
+     * Metodo principal del programa.
+     */
+    public final void run() {
 
-	public void run() {
+        pintarImagenes();
+        comprobarPecera();
+    }
 
-		pintarImagenes();
-		comprobarPecera();
-	}
+    /**
+     * Metodo inicial del programa.
+     */
+    public final void init() {
+        fullScreen();
+        pecera = new Pecera(array, CANTIDAD, getBounds()).crear();
+        pecera.posicionInicial();
+    }
 
-	public void init() {
-		// this.setSize(ANCHURA, ALTURA);
-		fullScreen();
-		pecera = new Pecera(array, 25, getBounds()).crear();
-		pecera.posicionInicial();
-	}
+    /**
+     * Comprueba que hayan peces en la pecera.
+     */
+    private void comprobarPecera() {
 
-	/**
-	 * Comprueba que hayan peces en la pecera.
-	 */
-	private void comprobarPecera() {
+        while (pecera.hayPeces()) {
+            eliminarPeces();
+            crearPecesBebes();
+            pause(PAUSA);
+        }
 
-		while (!pecera.hayPeces()) {
-			colisiones();
-			pause(20);
-		}
+    }
 
-	}
+    /**
+     * Metodo que itera una lista de peces y va eliminando los que van muriendo.
+     */
+    private void eliminarPeces() {
 
-	/**
-	 * Metodo que itera una lista de peces y va eliminando los que van muriendo.
-	 */
-	private void colisiones() {
-		for (Iterator<Pez> it = pecera.getPeces().iterator(); it.hasNext();) {
-			Pez a = it.next();
-			// Siempre que el pez no este declarado muerto
-			if (!a.estaMuerto()) {
-				pecera.moverPeces(a, 1);
-				pecera.noExcedeLimitesDePantalla(a);
-				pecera.comprobarColisiones(a);
-			} else {
-				it.remove();
-				remove(a.getImagen());
-			}
-		}
-	}
+        for (Iterator<Pez> it = pecera.getPeces().iterator(); it.hasNext();) {
+            Pez a = it.next();
 
-	/**
-	 * Metodo que recorre las imagenes creadas de los peces y las pinta por
-	 * pantalla.
-	 */
-	private void pintarImagenes() {
-		pecera.getPeces().forEach(p -> add(p.getImagen()));
-	}
+            if (pecera.cantidadPeces() == 2) {
+                pecera.noExcedeLimitesDePantalla(a);
+            }
+            // Siempre que el pez no este declarado muerto
+            if (!a.estaMuerto()) {
+                pecera.moverPeces(a, 1);
+                pecera.excedeLimitesDePantalla(a);
+                pecera.comprobarColisiones(a);
+            } else {
+                it.remove();
+                remove(a.getImagen());
+            }
+        }
+    }
 
-	/**
-	 * Imagen de fondo en la pantalla.
-	 */
-	// private void fondo() {
-	// GImage f = new GImage("");
-	// f.sendToBack();
-	// f.setBounds(0, 0, getWidth(), getHeight());
-	// add(f);
-	// }
-	/**
-	 * Poner la pantalla completa, al iniciar el juego.
-	 */
-	private void fullScreen() {
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    /**
+     * Metodo para agregar al canvas los peces bebes y a la lista de peces.
+     */
+    private void crearPecesBebes() {
+        pecera.getBebes().forEach(b -> add(b.getImagen()));
+        pecera.getPeces().addAll(pecera.getBebes());
+        pecera.getBebes().clear();
+    }
 
-		// height of the task bar
+    /**
+     * Metodo que recorre las imagenes creadas de los peces y las pinta por
+     * pantalla.
+     */
+    private void pintarImagenes() {
+        pecera.getPeces().forEach(p -> add(p.getImagen()));
+    }
 
-		Insets scnMax = Toolkit.getDefaultToolkit()
-				.getScreenInsets(getGraphicsConfiguration());
-		int taskBarSize = scnMax.bottom;
+    /**
+     * Imagen de fondo en la pantalla.
+     */
+    // private void fondo() {
+    // GImage f = new GImage("");
+    // f.sendToBack();
+    // f.setBounds(0, 0, getWidth(), getHeight());
+    // add(f);
+    // }
+    /**
+     * Poner la pantalla completa, al iniciar el juego.
+     */
+    private void fullScreen() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-		// available size of the screen
+        // height of the task bar
 
-		setSize(screenSize.width, screenSize.height - taskBarSize);
-		setLocation(screenSize.width - getWidth(),
-				screenSize.height - taskBarSize - getHeight());
-	}
+        Insets scnMax = Toolkit.getDefaultToolkit()
+                .getScreenInsets(getGraphicsConfiguration());
+        int taskBarSize = scnMax.bottom;
+
+        // available size of the screen
+
+        setSize(screenSize.width, screenSize.height - taskBarSize);
+        setLocation(screenSize.width - getWidth(),
+                screenSize.height - taskBarSize - getHeight());
+    }
 }
