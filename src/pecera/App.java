@@ -3,7 +3,9 @@ package pecera;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import acm.program.GraphicsProgram;
 
@@ -18,17 +20,36 @@ public class App extends GraphicsProgram {
      */
     private static final long serialVersionUID = -6604079658293550567L;
     /**
-     * Imagenes a usar.
+     * Nombres de imagenes a usar.
      */
-    private String[] array = { "macho_pez.png", "hembra_pez.png" };
+    /**
+     * Variable de pez macho.
+     */
+    private static final String MACHO = "macho";
+    /**
+     * Variable de pez hembra.
+     */
+    private static final String HEMBRA = "hembra";
+    /**
+     * Imagenes para los tiburones.
+     */
+    private String[] tibImg = { "macho_tiburon.png", "hembra_tiburon.png" };
+    /**
+     * Imagenes para los peces.
+     */
+    private String[] pecesImg = { "macho_pez.png", "hembra_pez.png" };
     /**
      * Pecera.
      */
     private Pecera pecera;
     /**
-     * Cantidad fija de peces a crear.
+     * Numero de tiburones a crear.
      */
-    private static final int CANTIDAD = 25;
+    private static final int N_TIBURONES = 3;
+    /**
+     * Numero de peces a crear.
+     */
+    private static final int N_PECES = 40;
     /**
      * Cuantos milisegundos pausara el juego.
      */
@@ -39,7 +60,6 @@ public class App extends GraphicsProgram {
      */
     public final void run() {
 
-        pintarImagenes();
         comprobarPecera();
     }
 
@@ -48,7 +68,18 @@ public class App extends GraphicsProgram {
      */
     public final void init() {
         fullScreen();
-        pecera = new Pecera(array, CANTIDAD, getBounds()).crear();
+        crearPecera();
+    }
+
+    /**
+     * Reunira todos los metodos necesarios para poner en funcionamiento la
+     * pecera.
+     */
+    private void crearPecera() {
+        pecera = new Pecera(getBounds());
+        pecera.agregarPeces(tiburones());
+        pecera.agregarPeces(peces());
+        pecera.definirDestino();
         pecera.posicionInicial();
     }
 
@@ -72,20 +103,62 @@ public class App extends GraphicsProgram {
 
         for (Iterator<Pez> it = pecera.getPeces().iterator(); it.hasNext();) {
             Pez a = it.next();
-
-            if (pecera.cantidadPeces() == 2) {
-                pecera.noExcedeLimitesDePantalla(a);
-            }
             // Siempre que el pez no este declarado muerto
             if (!a.estaMuerto()) {
+                // (pecera.cantidadPeces() == 2) {
+                pecera.noExcedeLimitesDePantalla(a);
+                // } else {
+                // pecera.excedeLimitesDePantalla(a);
+                // }
                 pecera.moverPeces(a, 1);
-                pecera.excedeLimitesDePantalla(a);
                 pecera.comprobarColisiones(a);
             } else {
                 it.remove();
                 remove(a.getImagen());
             }
         }
+    }
+
+    /**
+     * 
+     * @return retorna una lista de peces tiburones.
+     */
+    private List<Pez> tiburones() {
+        List<Pez> tiburones = new ArrayList<Pez>();
+
+        for (int i = 0; i < N_TIBURONES; i++) {
+            Tiburon t = null;
+
+            if (i % 2 == 0) {
+                t = new Tiburon(tibImg[0], MACHO, Helper.rand(1, 4));
+            } else {
+                t = new Tiburon(tibImg[1], HEMBRA, Helper.rand(1, 4));
+            }
+            tiburones.add(t);
+            add(t.getImagen());
+        }
+
+        return tiburones;
+    }
+
+    /**
+     * 
+     * @return retorna una lista de peces normales.
+     */
+    private List<Pez> peces() {
+        List<Pez> peces = new ArrayList<Pez>();
+
+        for (int i = 0; i < N_PECES; i++) {
+            Pez p = null;
+            if (i % 2 == 0) {
+                p = new Pez(pecesImg[0], MACHO, Helper.rand(1, 4));
+            } else {
+                p = new Pez(pecesImg[1], HEMBRA, Helper.rand(1, 4));
+            }
+            peces.add(p);
+            add(p.getImagen());
+        }
+        return peces;
     }
 
     /**
@@ -98,36 +171,17 @@ public class App extends GraphicsProgram {
     }
 
     /**
-     * Metodo que recorre las imagenes creadas de los peces y las pinta por
-     * pantalla.
-     */
-    private void pintarImagenes() {
-        pecera.getPeces().forEach(p -> add(p.getImagen()));
-    }
-
-    /**
-     * Imagen de fondo en la pantalla.
-     */
-    // private void fondo() {
-    // GImage f = new GImage("");
-    // f.sendToBack();
-    // f.setBounds(0, 0, getWidth(), getHeight());
-    // add(f);
-    // }
-    /**
      * Poner la pantalla completa, al iniciar el juego.
      */
     private void fullScreen() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
         // height of the task bar
-
         Insets scnMax = Toolkit.getDefaultToolkit()
                 .getScreenInsets(getGraphicsConfiguration());
         int taskBarSize = scnMax.bottom;
 
         // available size of the screen
-
         setSize(screenSize.width, screenSize.height - taskBarSize);
         setLocation(screenSize.width - getWidth(),
                 screenSize.height - taskBarSize - getHeight());

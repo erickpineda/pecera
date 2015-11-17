@@ -11,10 +11,6 @@ import java.util.List;
  */
 public class Pecera {
     /**
-     * Cantidad minima y maxima de peces, para crear de forma aleatoria.
-     */
-    private static final int MIN_P = 20, MAX_P = 25;
-    /**
      * Altura de la pantalla.
      */
     private double altura;
@@ -31,67 +27,44 @@ public class Pecera {
      */
     private List<Pez> recienNacidos = new ArrayList<Pez>();
     /**
-     * Cantidad de peces que se crearan de forma aleatoria.
-     */
-    private int cantidad;
-    /**
      * Variable de pez macho.
      */
     private static final String MACHO = "macho";
-    /**
-     * Variable de pez hembra.
-     */
-    private static final String HEMBRA = "hembra";
-    /**
-     * Variable de un pez, cuyo genero es desconocido.
-     */
-    private static final String DESCONOCIDO = "desconocido";
     /**
      * ss.
      */
     private static final int TRES = 3, CUATRO = 4;
 
     /**
-     * Arrat con los nombres de las imagenes.
-     */
-    private String[] imagenes;
-
-    /**
-     * Constructor a partir de un array de nombres de imagenes, cantidad de
-     * peces a crear y el rectangulo de la pantalla, para saber las dimensiones
-     * de esta.
+     * Crea una pecera respecto al rectangulo de la pantalla.
      * 
-     * @param noms
-     *            array de nombres de imagenes.
-     * @param cant
-     *            cantidad de peces que se crearan.
      * @param r
-     *            rectangulo con las dimensiones de la pantala.
+     *            el rectangulo de la pantalla.
      */
-    public Pecera(final String[] noms, final int cant, final Rectangle r) {
-        this.peces = new ArrayList<Pez>();
-        this.imagenes = noms;
-        setCantidad(cant);
+    public Pecera(final Rectangle r) {
+        this.peces = new ArrayList<>();
         this.anchura = r.getWidth();
         this.altura = r.getHeight();
     }
 
     /**
-     * Constructor a partir de un array de nombres de imagenes y el rectangulo
-     * de la pantalla, para saber las dimensiones de esta. La cantidad de peces
-     * se crearan de manera aleatoria a partir de {@code MAX_P} y {@code MIN_P}.
      * 
-     * @param noms
-     *            array de nombres de imagenes.
-     * @param r
-     *            rectangulo con las dimensiones de la pantala.
+     * @param nPeces
+     *            peces que se agregaran a la pecera.
      */
-    public Pecera(final String[] noms, final Rectangle r) {
-        this.peces = new ArrayList<Pez>();
-        this.imagenes = noms;
-        this.setCantidad(getAleatorio(MIN_P, MAX_P));
-        this.anchura = r.getWidth();
-        this.altura = r.getHeight();
+    public final void agregarPeces(final List<Pez> nPeces) {
+        this.peces.addAll(nPeces);
+    }
+
+    /**
+     * Metodo para definir el destino de cada pez y girar la imagen segun su
+     * direccion.
+     */
+    public final void definirDestino() {
+        for (Pez p : peces) {
+            darDireccion(p);
+            girarImagenSegunDireccion(p);
+        }
     }
 
     /**
@@ -104,86 +77,6 @@ public class Pecera {
         if (p != null) {
             peces.add(p);
         }
-    }
-
-    /**
-     * 
-     * @return retorna la clase Pecera que se crea en ese momento.
-     */
-    public final Pecera crear() {
-        for (int i = 0; i < cantidad; i++) {
-            addToList(crearUnPezCompleto());
-        }
-        return this;
-    }
-
-    /**
-     * 
-     * @return retorna un pez creado aleatoriamente.
-     */
-
-    public final Pez crearUnPez() {
-        String nombre = imagenes[getAleatorio(1, imagenes.length) - 1];
-        return definirGenero(nombre);
-    }
-
-    /**
-     * 
-     * @param nombre
-     *            nombre de la imagen para crear el pez.
-     * @return retorna un pez creado aleatoriamente a partir de un nombre de
-     *         imagen.
-     */
-    public final Pez crearUnPez(final String nombre) {
-        return definirGenero(nombre);
-    }
-
-    /**
-     * 
-     * @return retorna un pez con genero, direccion, posicion etc.
-     */
-    public final Pez crearUnPezCompleto() {
-        Pez nemo = crearUnPez();
-        darDireccion(nemo);
-        girarImagenSegunDireccion(nemo);
-        return nemo;
-    }
-
-    /**
-     * Crea un pez completo a partir de un nombre de imagen dada.
-     * 
-     * @param nombre
-     *            nombre de la imagen del pez a crear.
-     * 
-     * @return retorna un pez con genero, direccion, posicion etc.
-     */
-    public final Pez crearUnPezCompleto(final String nombre) {
-        Pez nemo = crearUnPez(nombre);
-        darDireccion(nemo);
-        girarImagenSegunDireccion(nemo);
-        return nemo;
-    }
-
-    /**
-     * 
-     * @param nombreImg
-     *            nombre de la imagen.
-     * @return retorna un pez con un genero definido.
-     */
-    private Pez definirGenero(final String nombreImg) {
-        Pez p = null;
-
-        if (nombreImg.contains(MACHO)) {
-            p = new Pez(nombreImg, MACHO);
-        }
-        if (nombreImg.contains(HEMBRA)) {
-            p = new Pez(nombreImg, HEMBRA);
-        }
-        if (!nombreImg.contains(MACHO) && !nombreImg.contains(HEMBRA)) {
-            p = new Pez(nombreImg, DESCONOCIDO);
-        }
-
-        return p;
     }
 
     /**
@@ -211,8 +104,8 @@ public class Pecera {
      *            pantalla.
      */
     private void posicionarAleatoriamente(final Pez p) {
-        p.posicionar(getAleatorio(0, anchura - p.getWidth()),
-                getAleatorio(0, altura - p.getHeight()));
+        p.posicionar(Helper.rand(0, (int) (anchura - p.getWidth())),
+                Helper.rand(0, (int) (altura - p.getHeight())));
     }
 
     /**
@@ -223,16 +116,16 @@ public class Pecera {
      */
     private void posicionarAlCostado(final Pez p) {
         if (p.getDireccion() == 1) {
-            p.posicionar(anchura - p.getWidth(), getAleatorio(0, altura));
+            p.posicionar(anchura - p.getWidth(), Helper.rand(0, (int) altura));
         }
         if (p.getDireccion() == 2) {
-            p.posicionar(getAleatorio(0, anchura), altura - p.getHeight());
+            p.posicionar(Helper.rand(0, (int) anchura), altura - p.getHeight());
         }
         if (p.getDireccion() == TRES) {
-            p.posicionar(0 - p.getWidth(), getAleatorio(0, altura));
+            p.posicionar(0, Helper.rand(0, (int) altura));
         }
         if (p.getDireccion() == CUATRO) {
-            p.posicionar(getAleatorio(0, anchura), 0 - p.getHeight());
+            p.posicionar(Helper.rand(0, (int) anchura), 0);
         }
     }
 
@@ -301,10 +194,7 @@ public class Pecera {
         final Pez b = pezQueColisiona(a);
 
         if (b != null) {
-            if (hayQueEliminar(a, b)) {
-                a.setHaMuerto(true);
-                b.setHaMuerto(true);
-            }
+            siHayQueEliminar(a, b);
             if (hayQueProcrear(a, b)) {
                 a.setPuedeReproducir(true);
                 b.setPuedeReproducir(false);
@@ -312,6 +202,23 @@ public class Pecera {
         } else {
             crearPezBebe(a, b);
         }
+    }
+
+    /**
+     * 
+     * @param a
+     *            pez como referencia para crear el nuevo pez.
+     * @return retorna un nuevo pez creado a partir de uno existente.
+     */
+    private Pez crearPezAPartirDeOtro(final Pez a) {
+        Pez b = null;
+        if (a instanceof Pez) {
+            b = new Pez(a.getNombreImg(), a.getGenero(), a.getDireccion());
+        }
+        if (a instanceof Tiburon) {
+            b = new Tiburon(a.getNombreImg(), a.getGenero(), a.getDireccion());
+        }
+        return b;
     }
 
     /**
@@ -324,7 +231,8 @@ public class Pecera {
      */
     private void crearPezBebe(final Pez a, Pez b) {
         if (a.isPuedeReproducir()) {
-            b = crearUnPezCompleto();
+            b = crearPezAPartirDeOtro(a);
+            girarImagenSegunDireccion(b);
             posicionarAlCostado(b);
             recienNacidos.add(b);
             a.setPuedeReproducir(false);
@@ -360,10 +268,24 @@ public class Pecera {
      *            pez a.
      * @param b
      *            pez b.
-     * @return retorna true si se debe destruir el pez.
      */
-    private boolean hayQueEliminar(final Pez a, final Pez b) {
-        return (esMacho(a) && esMacho(b) || !esMacho(a) && !esMacho(b));
+    private void siHayQueEliminar(final Pez a, final Pez b) {
+
+        if ((a instanceof Tiburon && b instanceof Tiburon)
+                || (a.getClass() == Pez.class && b.getClass() == Pez.class)) {
+
+            if ((esMacho(a) && esMacho(b)) || (!esMacho(a) && !esMacho(b))) {
+                a.setHaMuerto(true);
+                b.setHaMuerto(true);
+            }
+        } else {
+            if (a instanceof Tiburon && b instanceof Pez) {
+                b.setHaMuerto(true);
+            }
+            if (a instanceof Pez && b instanceof Tiburon) {
+                a.setHaMuerto(true);
+            }
+        }
     }
 
     /**
@@ -375,7 +297,13 @@ public class Pecera {
      * @return retorna true si hay qe crear un nuevo pez.
      */
     private boolean hayQueProcrear(final Pez a, final Pez b) {
-        return (esMacho(a) && !esMacho(b) || !esMacho(a) && esMacho(b));
+
+        if ((a instanceof Tiburon && b instanceof Tiburon)
+                || (a.getClass() == Pez.class && b.getClass() == Pez.class)) {
+
+            return ((esMacho(a) && !esMacho(b)) || (!esMacho(a) && esMacho(b)));
+        }
+        return false;
     }
 
     /**
@@ -430,7 +358,7 @@ public class Pecera {
      *            pez como parametro para dar direccion.
      */
     public final void darDireccion(final Pez p) {
-        p.setDireccion(getAleatorio(1, CUATRO));
+        p.setDireccion(Helper.rand(1, CUATRO));
     }
 
     /**
@@ -478,26 +406,6 @@ public class Pecera {
     }
 
     /**
-     * 
-     * @param desde
-     *            numero minimo.
-     * @param hasta
-     *            numero maximo.
-     * @return retorna un numero aleatorio apartir de un minimo y un maximo.
-     */
-    private int getAleatorio(final double desde, final double hasta) {
-        return (int) (Math.random() * (hasta - desde + 1) + desde);
-    }
-
-    /**
-     * @param cant
-     *            the cantidad to set
-     */
-    public final void setCantidad(final int cant) {
-        this.cantidad = cant;
-    }
-
-    /**
      * @return the peces
      */
     public final List<Pez> getPeces() {
@@ -509,7 +417,6 @@ public class Pecera {
      *            the peces to set
      */
     public final void setPeces(final List<Pez> peces) {
-        // peces this
         this.peces = peces;
     }
 }

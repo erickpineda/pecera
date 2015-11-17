@@ -12,7 +12,7 @@ public class Pez {
     /**
      * Velocidad del pez.
      */
-    private static final int VELOCIDAD_PEZ = getAleatorio(3, 6);
+    private static final int VELOCIDAD_PEZ = Helper.rand(2, 4);
     /**
      * Sera el nombre de la imagen.
      */
@@ -20,7 +20,7 @@ public class Pez {
     /**
      * Imagen del pez.
      */
-    private GImage imagen;
+    protected GImage imagen;
     /**
      * Genero.
      */
@@ -47,15 +47,6 @@ public class Pez {
     public Pez(final String nombre) {
         this.setNombreImg(nombre);
         this.setImagen(new GImage(nombre));
-    }
-
-    /**
-     * 
-     * @param img
-     *            GImage del pez a crear.
-     */
-    public Pez(final GImage img) {
-        this.setImagen(img);
     }
 
     /**
@@ -110,7 +101,7 @@ public class Pez {
      * @param y
      *            eje Y.
      */
-    public final void mover(final double x, final double y) {
+    public void mover(final double x, final double y) {
         this.imagen.move(x * VELOCIDAD_PEZ, y * VELOCIDAD_PEZ);
     }
 
@@ -190,18 +181,6 @@ public class Pez {
             }
         }
         imagen.setImage(new GImage(newpixels).getImage());
-    }
-
-    /**
-     * 
-     * @param desde
-     *            numero minimo.
-     * @param hasta
-     *            numero maximo.
-     * @return retorna un numero aleatorio.
-     */
-    private static int getAleatorio(final double desde, final double hasta) {
-        return (int) (Math.random() * (hasta - desde + 1) + desde);
     }
 
     /**
