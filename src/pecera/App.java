@@ -10,9 +10,7 @@ import java.util.List;
 import acm.program.GraphicsProgram;
 
 /**
- * 
  * @author Erick Pineda
- *
  */
 public class App extends GraphicsProgram {
     /**
@@ -31,13 +29,17 @@ public class App extends GraphicsProgram {
      */
     private static final String HEMBRA = "hembra";
     /**
+     * Anchura por defecto de la pantalla.
+     */
+    private static final int WIDTH = 1100;
+    /**
+     * Altura por defecto de la pantalla.
+     */
+    private static final int HEIGHT = 600;
+    /**
      * Imagenes para los tiburones.
      */
-    private String[] tibImg = { "macho_tiburon.png", "hembra_tiburon.png" };
-    /**
-     * Imagenes para los peces.
-     */
-    private String[] pecesImg = { "macho_pez.png", "hembra_pez.png" };
+    private String[] images = {"macho_pez.png", "hembra_pez.png", "macho_tiburon.png", "hembra_tiburon.png"};
     /**
      * Pecera.
      */
@@ -56,6 +58,13 @@ public class App extends GraphicsProgram {
     private static final int PAUSA = 50;
 
     /**
+     * @param args args
+     */
+    public static void main(String[] args) {
+        new App().start(args);
+    }
+
+    /**
      * Metodo principal del programa.
      */
     public final void run() {
@@ -67,7 +76,7 @@ public class App extends GraphicsProgram {
      * Metodo inicial del programa.
      */
     public final void init() {
-        fullScreen();
+        pantalla();
         crearPecera();
     }
 
@@ -101,7 +110,7 @@ public class App extends GraphicsProgram {
      */
     private void eliminarPeces() {
 
-        for (Iterator<Pez> it = pecera.getPeces().iterator(); it.hasNext();) {
+        for (Iterator<Pez> it = pecera.getPeces().iterator(); it.hasNext(); ) {
             Pez a = it.next();
             // Siempre que el pez no este declarado muerto
             if (!a.estaMuerto()) {
@@ -120,7 +129,6 @@ public class App extends GraphicsProgram {
     }
 
     /**
-     * 
      * @return retorna una lista de peces tiburones.
      */
     private List<Pez> tiburones() {
@@ -130,9 +138,9 @@ public class App extends GraphicsProgram {
             Tiburon t = null;
 
             if (i % 2 == 0) {
-                t = new Tiburon(tibImg[0], MACHO, Helper.rand(1, 4));
+                t = new Tiburon(images[2], MACHO, Helper.rand(1, 4));
             } else {
-                t = new Tiburon(tibImg[1], HEMBRA, Helper.rand(1, 4));
+                t = new Tiburon(images[3], HEMBRA, Helper.rand(1, 4));
             }
             tiburones.add(t);
             add(t.getImagen());
@@ -142,7 +150,6 @@ public class App extends GraphicsProgram {
     }
 
     /**
-     * 
      * @return retorna una lista de peces normales.
      */
     private List<Pez> peces() {
@@ -151,9 +158,9 @@ public class App extends GraphicsProgram {
         for (int i = 0; i < N_PECES; i++) {
             Pez p = null;
             if (i % 2 == 0) {
-                p = new Pez(pecesImg[0], MACHO, Helper.rand(1, 4));
+                p = new Pez(images[0], MACHO, Helper.rand(1, 4));
             } else {
-                p = new Pez(pecesImg[1], HEMBRA, Helper.rand(1, 4));
+                p = new Pez(images[1], HEMBRA, Helper.rand(1, 4));
             }
             peces.add(p);
             add(p.getImagen());
@@ -173,17 +180,21 @@ public class App extends GraphicsProgram {
     /**
      * Poner la pantalla completa, al iniciar el juego.
      */
-    private void fullScreen() {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    private void pantalla() {
+        try {
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-        // height of the task bar
-        Insets scnMax = Toolkit.getDefaultToolkit()
-                .getScreenInsets(getGraphicsConfiguration());
-        int taskBarSize = scnMax.bottom;
+            // height of the task bar
+            Insets scnMax = Toolkit.getDefaultToolkit()
+                    .getScreenInsets(getGraphicsConfiguration());
+            int taskBarSize = scnMax.bottom;
 
-        // available size of the screen
-        setSize(screenSize.width, screenSize.height - taskBarSize);
-        setLocation(screenSize.width - getWidth(),
-                screenSize.height - taskBarSize - getHeight());
+            // available size of the screen
+            setSize(screenSize.width, screenSize.height - taskBarSize);
+            setLocation(screenSize.width - getWidth(),
+                    screenSize.height - taskBarSize - getHeight());
+        } catch (Exception e) {
+            setSize(WIDTH, HEIGHT);
+        }
     }
 }
