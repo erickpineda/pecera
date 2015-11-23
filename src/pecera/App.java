@@ -18,6 +18,14 @@ public class App extends GraphicsProgram {
      */
     private static final long serialVersionUID = -6604079658293550567L;
     /**
+     * Anchura por defecto de la pantalla.
+     */
+    private static final int WIDTH = 1100;
+    /**
+     * Altura por defecto de la pantalla.
+     */
+    private static final int HEIGHT = 600;
+    /**
      * Imagenes a usar.
      */
     private String[] array = { "macho_pez.png", "hembra_pez.png" };
@@ -35,6 +43,13 @@ public class App extends GraphicsProgram {
     private static final int PAUSA = 50;
 
     /**
+     * @param args args
+     */
+    public static void main(String[] args) {
+        new App().start(args);
+    }
+
+    /**
      * Metodo principal del programa.
      */
     public final void run() {
@@ -47,7 +62,7 @@ public class App extends GraphicsProgram {
      * Metodo inicial del programa.
      */
     public final void init() {
-        fullScreen();
+        pantalla();
         pecera = new Pecera(array, CANTIDAD, getBounds()).crear();
         pecera.posicionInicial();
     }
@@ -117,19 +132,21 @@ public class App extends GraphicsProgram {
     /**
      * Poner la pantalla completa, al iniciar el juego.
      */
-    private void fullScreen() {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    private void pantalla() {
+        try {
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-        // height of the task bar
+            // height of the task bar
+            Insets scnMax = Toolkit.getDefaultToolkit()
+                    .getScreenInsets(getGraphicsConfiguration());
+            int taskBarSize = scnMax.bottom;
 
-        Insets scnMax = Toolkit.getDefaultToolkit()
-                .getScreenInsets(getGraphicsConfiguration());
-        int taskBarSize = scnMax.bottom;
-
-        // available size of the screen
-
-        setSize(screenSize.width, screenSize.height - taskBarSize);
-        setLocation(screenSize.width - getWidth(),
-                screenSize.height - taskBarSize - getHeight());
+            // available size of the screen
+            setSize(screenSize.width, screenSize.height - taskBarSize);
+            setLocation(screenSize.width - getWidth(),
+                    screenSize.height - taskBarSize - getHeight());
+        } catch (Exception e) {
+            setSize(WIDTH, HEIGHT);
+        }
     }
 }

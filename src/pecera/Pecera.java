@@ -71,7 +71,7 @@ public class Pecera {
     public Pecera(final String[] noms, final int cant, final Rectangle r) {
         this.peces = new ArrayList<Pez>();
         this.imagenes = noms;
-        setCantidad(cant);
+        this.setCantidad(cant);
         this.anchura = r.getWidth();
         this.altura = r.getHeight();
     }
@@ -89,7 +89,7 @@ public class Pecera {
     public Pecera(final String[] noms, final Rectangle r) {
         this.peces = new ArrayList<Pez>();
         this.imagenes = noms;
-        this.setCantidad(getAleatorio(MIN_P, MAX_P));
+        this.setCantidad(Helper.rand(MIN_P, MAX_P));
         this.anchura = r.getWidth();
         this.altura = r.getHeight();
     }
@@ -123,7 +123,7 @@ public class Pecera {
      */
 
     public final Pez crearUnPez() {
-        String nombre = imagenes[getAleatorio(1, imagenes.length) - 1];
+        String nombre = imagenes[Helper.rand(1, imagenes.length) - 1];
         return definirGenero(nombre);
     }
 
@@ -211,8 +211,8 @@ public class Pecera {
      *            pantalla.
      */
     private void posicionarAleatoriamente(final Pez p) {
-        p.posicionar(getAleatorio(0, anchura - p.getWidth()),
-                getAleatorio(0, altura - p.getHeight()));
+        p.posicionar(Helper.rand(0, (int) (anchura - p.getWidth())),
+                Helper.rand(0, (int) (altura - p.getHeight())));
     }
 
     /**
@@ -223,16 +223,16 @@ public class Pecera {
      */
     private void posicionarAlCostado(final Pez p) {
         if (p.getDireccion() == 1) {
-            p.posicionar(anchura - p.getWidth(), getAleatorio(0, altura));
+            p.posicionar(anchura - p.getWidth(), Helper.rand(0, (int) altura));
         }
         if (p.getDireccion() == 2) {
-            p.posicionar(getAleatorio(0, anchura), altura - p.getHeight());
+            p.posicionar(Helper.rand(0, (int) anchura), altura - p.getHeight());
         }
         if (p.getDireccion() == TRES) {
-            p.posicionar(0 - p.getWidth(), getAleatorio(0, altura));
+            p.posicionar(0 - p.getWidth(), Helper.rand(0, (int) altura));
         }
         if (p.getDireccion() == CUATRO) {
-            p.posicionar(getAleatorio(0, anchura), 0 - p.getHeight());
+            p.posicionar(Helper.rand(0, (int) anchura), 0 - p.getHeight());
         }
     }
 
@@ -430,7 +430,7 @@ public class Pecera {
      *            pez como parametro para dar direccion.
      */
     public final void darDireccion(final Pez p) {
-        p.setDireccion(getAleatorio(1, CUATRO));
+        p.setDireccion(Helper.rand(1, CUATRO));
     }
 
     /**
@@ -475,18 +475,6 @@ public class Pecera {
      */
     public final void remover(final Pez p) {
         peces.remove(p);
-    }
-
-    /**
-     * 
-     * @param desde
-     *            numero minimo.
-     * @param hasta
-     *            numero maximo.
-     * @return retorna un numero aleatorio apartir de un minimo y un maximo.
-     */
-    private int getAleatorio(final double desde, final double hasta) {
-        return (int) (Math.random() * (hasta - desde + 1) + desde);
     }
 
     /**
