@@ -39,7 +39,10 @@ public class App extends GraphicsProgram {
     /**
      * Imagenes para los tiburones.
      */
-    private String[] images = {"macho_pez.png", "hembra_pez.png", "macho_tiburon.png", "hembra_tiburon.png"};
+    private String[] images = { "macho_pez.png", "hembra_pez.png",
+            "macho_tiburon.png", "hembra_tiburon.png", "macho_delfin.png",
+            "hembra_delfin.png", "macho_pulpo.png", "hembra_pulpo.png",
+            "macho_tortuga.png", "hembra_tortuga.png" };
     /**
      * Pecera.
      */
@@ -53,12 +56,25 @@ public class App extends GraphicsProgram {
      */
     private static final int N_PECES = 40;
     /**
+     * Numero de delfines a crear.
+     */
+    private static final int N_DELFINES = 4;
+    /**
+     * Numero de pulpos a crear.
+     */
+    private static final int N_PULPOS = 3;
+    /**
+     * Numero de tortugas a crear.
+     */
+    private static final int N_TORTUGAS = 5;
+    /**
      * Cuantos milisegundos pausara el juego.
      */
     private static final int PAUSA = 50;
 
     /**
-     * @param args args
+     * @param args
+     *            args
      */
     public static void main(String[] args) {
         new App().start(args);
@@ -88,6 +104,9 @@ public class App extends GraphicsProgram {
         pecera = new Pecera(getBounds());
         pecera.agregarPeces(tiburones());
         pecera.agregarPeces(peces());
+        pecera.agregarPeces(delfines());
+        pecera.agregarPeces(pulpos());
+        pecera.agregarPeces(tortugas());
         pecera.definirDestino();
         pecera.posicionInicial();
     }
@@ -110,7 +129,7 @@ public class App extends GraphicsProgram {
      */
     private void eliminarPeces() {
 
-        for (Iterator<Pez> it = pecera.getPeces().iterator(); it.hasNext(); ) {
+        for (Iterator<Pez> it = pecera.getPeces().iterator(); it.hasNext();) {
             Pez a = it.next();
             // Siempre que el pez no este declarado muerto
             if (!a.estaMuerto()) {
@@ -166,6 +185,63 @@ public class App extends GraphicsProgram {
             add(p.getImagen());
         }
         return peces;
+    }
+
+    /**
+     * @return retorna una lista de delfines.
+     */
+    private List<Pez> delfines() {
+        List<Pez> delfines = new ArrayList<Pez>();
+
+        for (int i = 0; i < N_DELFINES; i++) {
+            Pez p = null;
+            if (i % 2 == 0) {
+                p = new Delfin(images[4], MACHO, Helper.rand(1, 4));
+            } else {
+                p = new Delfin(images[5], HEMBRA, Helper.rand(1, 4));
+            }
+            delfines.add(p);
+            add(p.getImagen());
+        }
+        return delfines;
+    }
+
+    /**
+     * @return retorna una lista de pulpos.
+     */
+    private List<Pez> pulpos() {
+        List<Pez> pulpos = new ArrayList<Pez>();
+
+        for (int i = 0; i < N_DELFINES; i++) {
+            Pez p = null;
+            if (i % 2 == 0) {
+                p = new Pulpo(images[6], MACHO, Helper.rand(1, 4));
+            } else {
+                p = new Pulpo(images[7], HEMBRA, Helper.rand(1, 4));
+            }
+            pulpos.add(p);
+            add(p.getImagen());
+        }
+        return pulpos;
+    }
+
+    /**
+     * @return retorna una lista de tortugas.
+     */
+    private List<Pez> tortugas() {
+        List<Pez> tortugas = new ArrayList<Pez>();
+
+        for (int i = 0; i < N_DELFINES; i++) {
+            Pez p = null;
+            if (i % 2 == 0) {
+                p = new Tortuga(images[8], MACHO, Helper.rand(1, 4));
+            } else {
+                p = new Tortuga(images[9], HEMBRA, Helper.rand(1, 4));
+            }
+            tortugas.add(p);
+            add(p.getImagen());
+        }
+        return tortugas;
     }
 
     /**
