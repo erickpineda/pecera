@@ -1,9 +1,16 @@
 package pecera;
 
-public class Tortuga extends Pez {
+public class Tortuga extends Animal {
 
-    public Tortuga(String nombre, String gen, int dir) {
-        super(nombre, gen, dir);
+    private final double VELOCIDAD_TORTUGA = Helper.rand(1, 6);
+
+    public Tortuga(String nombre, String gen) {
+        super(nombre, gen);
+    }
+
+    @Override
+    public void mover(double x, double y) {
+        this.imagen.move(x * VELOCIDAD_TORTUGA, y * VELOCIDAD_TORTUGA);
     }
 
 }

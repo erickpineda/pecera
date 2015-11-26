@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import acm.graphics.GImage;
 import acm.program.GraphicsProgram;
 
 /**
@@ -39,14 +40,21 @@ public class App extends GraphicsProgram {
     /**
      * Imagenes para los tiburones.
      */
-    private String[] images = { "macho_pez.png", "hembra_pez.png",
-            "macho_tiburon.png", "hembra_tiburon.png", "macho_delfin.png",
-            "hembra_delfin.png", "macho_pulpo.png", "hembra_pulpo.png",
-            "macho_tortuga.png", "hembra_tortuga.png" };
+    private String[] images = { "macho_pez.png", "hembra_pez.png", "macho_tiburon.png",
+            "hembra_tiburon.png", "macho_delfin.png", "hembra_delfin.png", "macho_pulpo.png",
+            "macho_tortuga.png" };
+    /**
+     * Imagen para el fondo de la pantalla.
+     */
+    private static final String IMG_FONDO = "fondo2.jpg";
     /**
      * Pecera.
      */
     private Pecera pecera;
+    /**
+     * Lista de animales.
+     */
+    private List<Animal> animales = new ArrayList<Animal>();
     /**
      * Numero de tiburones a crear.
      */
@@ -54,19 +62,19 @@ public class App extends GraphicsProgram {
     /**
      * Numero de peces a crear.
      */
-    private static final int N_PECES = 40;
+    private static final int N_PECES = 60;
     /**
      * Numero de delfines a crear.
      */
-    private static final int N_DELFINES = 4;
+    private static final int N_DELFINES = 10;
     /**
      * Numero de pulpos a crear.
      */
-    private static final int N_PULPOS = 3;
+    private static final int N_PULPOS = 5;
     /**
      * Numero de tortugas a crear.
      */
-    private static final int N_TORTUGAS = 5;
+    private static final int N_TORTUGAS = 10;
     /**
      * Cuantos milisegundos pausara el juego.
      */
@@ -84,7 +92,6 @@ public class App extends GraphicsProgram {
      * Metodo principal del programa.
      */
     public final void run() {
-
         comprobarPecera();
     }
 
@@ -93,6 +100,7 @@ public class App extends GraphicsProgram {
      */
     public final void init() {
         pantalla();
+        fondoPantalla(IMG_FONDO);
         crearPecera();
     }
 
@@ -102,11 +110,7 @@ public class App extends GraphicsProgram {
      */
     private void crearPecera() {
         pecera = new Pecera(getBounds());
-        pecera.agregarPeces(tiburones());
-        pecera.agregarPeces(peces());
-        pecera.agregarPeces(delfines());
-        pecera.agregarPeces(pulpos());
-        pecera.agregarPeces(tortugas());
+        pecera.agregarAnimales(crearListaAnimales());
         pecera.definirDestino();
         pecera.posicionInicial();
     }
@@ -129,8 +133,8 @@ public class App extends GraphicsProgram {
      */
     private void eliminarPeces() {
 
-        for (Iterator<Pez> it = pecera.getPeces().iterator(); it.hasNext();) {
-            Pez a = it.next();
+        for (Iterator<Animal> it = pecera.getAnimales().iterator(); it.hasNext();) {
+            Animal a = it.next();
             // Siempre que el pez no este declarado muerto
             if (!a.estaMuerto()) {
                 // (pecera.cantidadPeces() == 2) {
@@ -148,109 +152,104 @@ public class App extends GraphicsProgram {
     }
 
     /**
-     * @return retorna una lista de peces tiburones.
-     */
-    private List<Pez> tiburones() {
-        List<Pez> tiburones = new ArrayList<Pez>();
-
-        for (int i = 0; i < N_TIBURONES; i++) {
-            Tiburon t = null;
-
-            if (i % 2 == 0) {
-                t = new Tiburon(images[2], MACHO, Helper.rand(1, 4));
-            } else {
-                t = new Tiburon(images[3], HEMBRA, Helper.rand(1, 4));
-            }
-            tiburones.add(t);
-            add(t.getImagen());
-        }
-
-        return tiburones;
-    }
-
-    /**
-     * @return retorna una lista de peces normales.
-     */
-    private List<Pez> peces() {
-        List<Pez> peces = new ArrayList<Pez>();
-
-        for (int i = 0; i < N_PECES; i++) {
-            Pez p = null;
-            if (i % 2 == 0) {
-                p = new Pez(images[0], MACHO, Helper.rand(1, 4));
-            } else {
-                p = new Pez(images[1], HEMBRA, Helper.rand(1, 4));
-            }
-            peces.add(p);
-            add(p.getImagen());
-        }
-        return peces;
-    }
-
-    /**
-     * @return retorna una lista de delfines.
-     */
-    private List<Pez> delfines() {
-        List<Pez> delfines = new ArrayList<Pez>();
-
-        for (int i = 0; i < N_DELFINES; i++) {
-            Pez p = null;
-            if (i % 2 == 0) {
-                p = new Delfin(images[4], MACHO, Helper.rand(1, 4));
-            } else {
-                p = new Delfin(images[5], HEMBRA, Helper.rand(1, 4));
-            }
-            delfines.add(p);
-            add(p.getImagen());
-        }
-        return delfines;
-    }
-
-    /**
-     * @return retorna una lista de pulpos.
-     */
-    private List<Pez> pulpos() {
-        List<Pez> pulpos = new ArrayList<Pez>();
-
-        for (int i = 0; i < N_DELFINES; i++) {
-            Pez p = null;
-            if (i % 2 == 0) {
-                p = new Pulpo(images[6], MACHO, Helper.rand(1, 4));
-            } else {
-                p = new Pulpo(images[7], HEMBRA, Helper.rand(1, 4));
-            }
-            pulpos.add(p);
-            add(p.getImagen());
-        }
-        return pulpos;
-    }
-
-    /**
-     * @return retorna una lista de tortugas.
-     */
-    private List<Pez> tortugas() {
-        List<Pez> tortugas = new ArrayList<Pez>();
-
-        for (int i = 0; i < N_DELFINES; i++) {
-            Pez p = null;
-            if (i % 2 == 0) {
-                p = new Tortuga(images[8], MACHO, Helper.rand(1, 4));
-            } else {
-                p = new Tortuga(images[9], HEMBRA, Helper.rand(1, 4));
-            }
-            tortugas.add(p);
-            add(p.getImagen());
-        }
-        return tortugas;
-    }
-
-    /**
      * Metodo para agregar al canvas los peces bebes y a la lista de peces.
      */
     private void crearPecesBebes() {
         pecera.getBebes().forEach(b -> add(b.getImagen()));
-        pecera.getPeces().addAll(pecera.getBebes());
+        pecera.getAnimales().addAll(pecera.getBebes());
         pecera.getBebes().clear();
+    }
+
+    /**
+     * Crea una lista de animales a partir de su clase y una cantidad.
+     * 
+     * @param clase
+     *            clase del animal a crear.
+     * @param total
+     *            cantidad de animales a crear.
+     */
+    private void crearAnimales(Class<? extends Animal> clase, int total) {
+
+        for (int i = 0; i < total; i++) {
+            Animal an = null;
+            an = creaUnAnimal(clase);
+            animales.add(an);
+            add(an.getImagen());
+        }
+    }
+
+    /**
+     * Crea un animal segun la clase que pasa por parametro.
+     * 
+     * @param clase
+     *            clase del animal a crear.
+     * @return retorna un animal segun su clase.
+     */
+    private Animal creaUnAnimal(Class<? extends Animal> clase) {
+        String imagen = "";
+
+        if (clase.isAssignableFrom(Pez.class)) {
+            imagen = images[Helper.rand(0, 1)];
+            return new Pez(imagen, defineGen(imagen));
+        }
+        if (clase.isAssignableFrom(Tiburon.class)) {
+            imagen = images[Helper.rand(2, 3)];
+            return new Tiburon(imagen, defineGen(imagen));
+        }
+        if (clase.isAssignableFrom(Delfin.class)) {
+            imagen = images[Helper.rand(4, 5)];
+            return new Delfin(imagen, defineGen(imagen));
+        }
+        if (clase.isAssignableFrom(Pulpo.class)) {
+            imagen = images[6];
+            return new Pulpo(imagen, defineGen(imagen));
+        }
+        if (clase.isAssignableFrom(Tortuga.class)) {
+            imagen = images[7];
+            return new Tortuga(imagen, defineGen(imagen));
+        }
+        return null;
+    }
+
+    /**
+     * Define el gen del animal a partir del nombre de la imagen,
+     * obligatoriamente debe llevar 'macho_' o 'hembra_' al inicio del nombre.
+     * 
+     * @param gen
+     *            String que define el gen del animal.
+     * @return retorna un String con el gen del animal.
+     */
+    private String defineGen(String gen) {
+        if (gen.contains(MACHO)) {
+            gen = MACHO;
+        }
+        if (gen.contains(HEMBRA)) {
+            gen = HEMBRA;
+        }
+        return gen;
+    }
+
+    /**
+     * 
+     * @return retorna una lista de peces creados a partir de sus clases.
+     */
+    public List<Animal> crearListaAnimales() {
+        crearAnimales(Pez.class, N_PECES);
+        crearAnimales(Tiburon.class, N_TIBURONES);
+        crearAnimales(Delfin.class, N_DELFINES);
+        crearAnimales(Pulpo.class, N_PULPOS);
+        crearAnimales(Tortuga.class, N_TORTUGAS);
+        return animales;
+    }
+
+    /**
+     * @param imagenFondo
+     *            sera la imagen de fondo que llevara la pantalla.
+     */
+    public void fondoPantalla(String imagenFondo) {
+        GImage fondo = new GImage(imagenFondo);
+        fondo.setBounds(0, 0, getWidth(), getHeight());
+        add(fondo);
     }
 
     /**
@@ -261,14 +260,14 @@ public class App extends GraphicsProgram {
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
             // height of the task bar
-            Insets scnMax = Toolkit.getDefaultToolkit()
-                    .getScreenInsets(getGraphicsConfiguration());
+            Insets scnMax = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
             int taskBarSize = scnMax.bottom;
 
             // available size of the screen
             setSize(screenSize.width, screenSize.height - taskBarSize);
             setLocation(screenSize.width - getWidth(),
                     screenSize.height - taskBarSize - getHeight());
+
         } catch (Exception e) {
             setSize(WIDTH, HEIGHT);
         }

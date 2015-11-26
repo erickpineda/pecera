@@ -19,15 +19,15 @@ public class Pecera {
      */
     private double anchura;
     /**
-     * Lista de peces.
+     * Lista de animales.
      */
-    private List<Pez> peces;
+    private List<Animal> animales;
     /**
-     * Lista de peces nacidos a partir de las colisiones.
+     * Lista de animales nacidos a partir de las colisiones.
      */
-    private List<Pez> recienNacidos = new ArrayList<Pez>();
+    private List<Animal> recienNacidos = new ArrayList<Animal>();
     /**
-     * Variable de pez macho.
+     * Variable de animal macho.
      */
     private static final String MACHO = "macho";
     /**
@@ -42,7 +42,7 @@ public class Pecera {
      *            el rectangulo de la pantalla.
      */
     public Pecera(final Rectangle r) {
-        this.peces = new ArrayList<>();
+        this.animales = new ArrayList<>();
         this.anchura = r.getWidth();
         this.altura = r.getHeight();
     }
@@ -50,32 +50,32 @@ public class Pecera {
     /**
      * 
      * @param nPeces
-     *            peces que se agregaran a la pecera.
+     *            animales que se agregaran a la pecera.
      */
-    public final void agregarPeces(final List<Pez> nPeces) {
-        this.peces.addAll(nPeces);
+    public final void agregarAnimales(final List<Animal> nPeces) {
+        this.animales.addAll(nPeces);
     }
 
     /**
-     * Metodo para definir el destino de cada pez y girar la imagen segun su
+     * Metodo para definir el destino de cada animal y girar la imagen segun su
      * direccion.
      */
     public final void definirDestino() {
-        for (Pez p : peces) {
+        for (Animal p : animales) {
             darDireccion(p);
-            girarImagenSegunDireccion(p);
+            p.girarImagenSegunDireccion(true);
         }
     }
 
     /**
-     * Metodo para agregar un pez a la lista.
+     * Metodo para agregar un animal a la lista.
      * 
      * @param p
-     *            pez que se agregara a la lista.
+     *            animal que se agregara a la lista.
      */
-    public final void addToList(final Pez p) {
+    public final void addToList(final Animal p) {
         if (p != null) {
-            peces.add(p);
+            animales.add(p);
         }
     }
 
@@ -84,42 +84,41 @@ public class Pecera {
      * @return retorna la cantidad de peces en la pecera.
      */
     public final int cantidadPeces() {
-        return peces.size();
+        return animales.size();
     }
 
     /**
-     * Metodo que posiciona todos los peces en la pecera, al inicio del juego de
-     * forma aleatoria en la pantalla..
+     * Metodo que posiciona todos los animales en la pecera, al inicio del juego
+     * de forma aleatoria en la pantalla..
      */
     public final void posicionInicial() {
         for (int i = 0; i < cantidadPeces(); i++) {
-            posicionarAleatoriamente(getPez(i));
+            posicionarAleatoriamente(getAnimal(i));
         }
     }
 
     /**
      * 
      * @param p
-     *            pez como parametro para posicionarlo de manera aleatoria en la
-     *            pantalla.
+     *            animal como parametro para posicionarlo de manera aleatoria en
+     *            la pantalla.
      */
-    private void posicionarAleatoriamente(final Pez p) {
-        p.posicionar(Helper.rand(0, (int) (anchura - p.getWidth())),
-                Helper.rand(0, (int) (altura - p.getHeight())));
+    private void posicionarAleatoriamente(final Animal p) {
+        p.posicionarAleatoriamente(anchura, altura);
     }
 
     /**
-     * Metodo que posiciona un pez a un costado de la pantalla.
+     * Metodo que posiciona un animal a un costado de la pantalla.
      * 
      * @param p
-     *            pez que se posicionara al costado segun su direccion.
+     *            animal que se posicionara al costado segun su direccion.
      */
-    private void posicionarAlCostado(final Pez p) {
+    private void posicionarAlCostado(final Animal p) {
         if (p.getDireccion() == 1) {
             p.posicionar(anchura - p.getWidth(), Helper.rand(0, (int) altura));
         }
         if (p.getDireccion() == 2) {
-            p.posicionar(Helper.rand(0, (int) anchura), altura - p.getHeight());
+            p.getImagen().setLocation(Helper.rand(0, (int) anchura), altura - p.getHeight());
         }
         if (p.getDireccion() == TRES) {
             p.posicionar(0, Helper.rand(0, (int) altura));
@@ -131,7 +130,7 @@ public class Pecera {
 
     /**
      * 
-     * @return retorna cierto o falso, si en la pecera hay mas de un pez.
+     * @return retorna cierto o falso, si en la pecera hay mas de un animal.
      */
     public final boolean hayPeces() {
 
@@ -142,39 +141,37 @@ public class Pecera {
     }
 
     /**
-     * Metodo que va comprobando si un pez se sale de la pantalla.
+     * Metodo que va comprobando si un animal se sale de la pantalla.
      * 
      * @param a
-     *            parametro del pez a comprobar.
+     *            parametro del animal a comprobar.
      */
-    public final void noExcedeLimitesDePantalla(final Pez a) {
-        if (a.getX() <= 0) {
+    public final void noExcedeLimitesDePantalla(final Animal a) {
+        if (a.getX() < 0) {
             a.setDireccion(TRES);
-            a.flipX();
+            a.girarImagenSegunDireccion(false);
         }
-        if (a.getPosFinalX() >= anchura) {
+        if (a.getPosFinalX() > anchura) {
             a.setDireccion(1);
-            a.flipX();
+            a.girarImagenSegunDireccion(false);
         }
-        if (a.getPosFinalY() >= altura) {
+        if (a.getPosFinalY() > altura) {
             a.setDireccion(2);
-            a.flipY();
-            a.flipY();
+            a.girarImagenSegunDireccion(false);
         }
-        if (a.getY() <= 0) {
+        if (a.getY() < 0) {
             a.setDireccion(CUATRO);
-            a.flipY2();
-            a.flipY2();
+            a.girarImagenSegunDireccion(false);
         }
     }
 
     /**
-     * Metodo creado con el fin de matar peces una vez salen de la pantalla.
+     * Metodo creado con el fin de matar animales una vez salen de la pantalla.
      * 
      * @param a
-     *            pez que se sale de pantalla.
+     *            animal que se sale de pantalla.
      */
-    public final void excedeLimitesDePantalla(final Pez a) {
+    public final void excedeLimitesDePantalla(final Animal a) {
         if (a.getPosFinalX() < 0 || a.getX() > anchura || a.getY() > altura
                 || a.getPosFinalY() < 0) {
 
@@ -183,15 +180,15 @@ public class Pecera {
     }
 
     /**
-     * Metodo que recibe un pez por parametro y lo cmpara con otro, para saber
-     * si colisiona con otro. Peces con genero igual se matan y con genero
-     * opuesto crian uno nuevo.
+     * Metodo que recibe un animal por parametro y lo cmpara con otro, para
+     * saber si colisiona con otro. Animales con genero igual se matan y con
+     * genero opuesto crian uno nuevo.
      * 
      * @param a
-     *            pez a comparar.
+     *            animal a comparar.
      */
-    public final void comprobarColisiones(final Pez a) {
-        final Pez b = pezQueColisiona(a);
+    public final void comprobarColisiones(final Animal a) {
+        final Animal b = pezQueColisiona(a);
 
         if (b != null) {
             siHayQueEliminar(a, b);
@@ -207,32 +204,35 @@ public class Pecera {
     /**
      * 
      * @param a
-     *            pez como referencia para crear el nuevo pez.
-     * @return retorna un nuevo pez creado a partir de uno existente.
+     *            animal como referencia para crear el nuevo animal.
+     * @return retorna un nuevo animal creado a partir de uno existente.
      */
-    private Pez crearPezAPartirDeOtro(final Pez a) {
-        Pez b = null;
+    private Animal crearPezAPartirDeOtro(final Animal a) {
+        Animal b = null;
         if (a instanceof Pez) {
-            b = new Pez(a.getNombreImg(), a.getGenero(), a.getDireccion());
+            b = new Pez(a.getNombreImg(), a.getGenero(), Helper.rand(1, CUATRO));
         }
         if (a instanceof Tiburon) {
-            b = new Tiburon(a.getNombreImg(), a.getGenero(), a.getDireccion());
+            b = new Tiburon(a.getNombreImg(), a.getGenero(), Helper.rand(1, CUATRO));
+        }
+        if (a instanceof Delfin) {
+            b = new Delfin(a.getNombreImg(), a.getGenero(), Helper.rand(1, CUATRO));
         }
         return b;
     }
 
     /**
-     * Metodo que crea una cria de pez, aleatoriamente macho o hembra.
+     * Metodo que crea una cria de animal, aleatoriamente macho o hembra.
      * 
      * @param a
-     *            es el pez que colisiona.
+     *            es el animal que colisiona.
      * @param b
-     *            es el pez colisionado.
+     *            es el animal colisionado.
      */
-    private void crearPezBebe(final Pez a, Pez b) {
+    private void crearPezBebe(final Animal a, Animal b) {
         if (a.isPuedeReproducir()) {
             b = crearPezAPartirDeOtro(a);
-            girarImagenSegunDireccion(b);
+            b.girarImagenSegunDireccion(true);
             posicionarAlCostado(b);
             recienNacidos.add(b);
             a.setPuedeReproducir(false);
@@ -243,11 +243,11 @@ public class Pecera {
     /**
      * 
      * @param a
-     *            pez que colisiona.
-     * @return retorna null cuando el pez no colisiona.
+     *            animal que colisiona.
+     * @return retorna null cuando el animal no colisiona.
      */
-    private Pez pezQueColisiona(final Pez a) {
-        for (Pez b : getPeces()) {
+    private Animal pezQueColisiona(final Animal a) {
+        for (Animal b : getAnimales()) {
             if (b != a && a.getPosicion().intersects(b.getPosicion())) {
                 return b;
             }
@@ -257,22 +257,24 @@ public class Pecera {
 
     /**
      * 
-     * @return retorna la lista de peces recien nacidos.
+     * @return retorna la lista de animales recien nacidos.
      */
-    public final List<Pez> getBebes() {
+    public final List<Animal> getBebes() {
         return recienNacidos;
     }
 
     /**
      * @param a
-     *            pez a.
+     *            animal a.
      * @param b
-     *            pez b.
+     *            animal b.
      */
-    private void siHayQueEliminar(final Pez a, final Pez b) {
+    private void siHayQueEliminar(final Animal a, final Animal b) {
 
-        if ((a instanceof Tiburon && b instanceof Tiburon)
-                || (a.getClass() == Pez.class && b.getClass() == Pez.class)) {
+        if ((a instanceof Tiburon && b instanceof Tiburon) || (a instanceof Pez && b instanceof Pez)
+                || (a instanceof Delfin && b instanceof Delfin)
+                || (a instanceof Pulpo && b instanceof Pulpo)
+                || (a instanceof Tortuga && b instanceof Tortuga)) {
 
             if ((esMacho(a) && esMacho(b)) || (!esMacho(a) && !esMacho(b))) {
                 a.setHaMuerto(true);
@@ -282,8 +284,14 @@ public class Pecera {
             if (a instanceof Tiburon && b instanceof Pez) {
                 b.setHaMuerto(true);
             }
+            if (a instanceof Tiburon && b instanceof Delfin) {
+                a.setHaMuerto(true);
+            }
             if (a instanceof Pez && b instanceof Tiburon) {
                 a.setHaMuerto(true);
+            }
+            if (a instanceof Delfin && b instanceof Tiburon) {
+                b.setHaMuerto(true);
             }
         }
     }
@@ -291,15 +299,15 @@ public class Pecera {
     /**
      * 
      * @param a
-     *            pez a.
+     *            animal a.
      * @param b
-     *            pez b.
-     * @return retorna true si hay qe crear un nuevo pez.
+     *            animal b.
+     * @return retorna true si hay qe crear un nuevo animal.
      */
-    private boolean hayQueProcrear(final Pez a, final Pez b) {
+    private boolean hayQueProcrear(final Animal a, final Animal b) {
 
-        if ((a instanceof Tiburon && b instanceof Tiburon)
-                || (a.getClass() == Pez.class && b.getClass() == Pez.class)) {
+        if ((a instanceof Tiburon && b instanceof Tiburon) || (a instanceof Pez && b instanceof Pez)
+                || (a instanceof Delfin && b instanceof Delfin)) {
 
             return ((esMacho(a) && !esMacho(b)) || (!esMacho(a) && esMacho(b)));
         }
@@ -309,12 +317,12 @@ public class Pecera {
     /**
      * 
      * @param a
-     *            pez a.
+     *            animal a.
      * @param b
-     *            pez b.
-     * @return retorna true si los peces colisionan.
+     *            animal b.
+     * @return retorna true si los animales colisionan.
      */
-    public final boolean colisionan(final Pez a, final Pez b) {
+    public final boolean colisionan(final Animal a, final Animal b) {
         return (!a.getPosicion().equals(b.getPosicion())
                 && a.getPosicion().intersects(b.getPosicion()));
     }
@@ -322,101 +330,68 @@ public class Pecera {
     /**
      * 
      * @param p
-     *            pez quien se le comprobara su genero.
-     * @return retorna true si un pez es macho.
+     *            animal quien se le comprobara su genero.
+     * @return retorna true si un animal es macho.
      */
-    public final boolean esMacho(final Pez p) {
+    public final boolean esMacho(final Animal p) {
         return (p.getGenero().equals(MACHO));
     }
 
     /**
-     * Gira las imagenes de los peces segun la direccion obtenida.
+     * Metodo para darle direccion a un animal de forma aleatoria.
      * 
      * @param p
-     *            pez a girar.
+     *            animal como parametro para dar direccion.
      */
-    public final void girarImagenSegunDireccion(final Pez p) {
-        if (p.getDireccion() == 1) {
-            p.flipX();
-            p.flipX();
-        }
-        if (p.getDireccion() == 2) {
-            p.flipY();
-        }
-        if (p.getDireccion() == TRES) {
-            p.flipX();
-        }
-        if (p.getDireccion() == CUATRO) {
-            p.flipY2();
-        }
-    }
-
-    /**
-     * Metodo para darle direccion a un pez de forma aleatoria.
-     * 
-     * @param p
-     *            pez como parametro para dar direccion.
-     */
-    public final void darDireccion(final Pez p) {
+    public final void darDireccion(final Animal p) {
         p.setDireccion(Helper.rand(1, CUATRO));
     }
 
     /**
-     * Metodo para mover los peces segun su direccion y cuantas posiciones
+     * Metodo para mover los animales segun su direccion y cuantas posiciones
      * movera.
      * 
      * @param p
-     *            pez a mover.
+     *            animal a mover.
      * @param pos
      *            cuantos pixeles movera.
      */
-    public final void moverPeces(final Pez p, final double pos) {
-        if (p.getDireccion() == 1) {
-            p.mover(-pos, 0);
-        }
-        if (p.getDireccion() == 2) {
-            p.mover(0, -pos);
-        }
-        if (p.getDireccion() == TRES) {
-            p.mover(pos, 0);
-        }
-        if (p.getDireccion() == CUATRO) {
-            p.mover(0, pos);
-        }
+    public final void moverPeces(final Animal p, final int pos) {
+        p.moverSegunDireccion(pos);
 
     }
 
     /**
      * 
      * @param i
-     *            posicion en la lista de peces.
-     * @return retorna un pez a partir de su posicion en la lista.
+     *            posicion en la lista de animales.
+     * @return retorna un animal a partir de su posicion en la lista.
      */
-    public final Pez getPez(final int i) {
-        return peces.get(i);
+    public final Animal getAnimal(final int i) {
+        return animales.get(i);
     }
 
     /**
      * 
      * @param p
-     *            pez a remover de la lista.
+     *            animal a remover de la lista.
      */
-    public final void remover(final Pez p) {
-        peces.remove(p);
+    public final void remover(final Animal p) {
+        animales.remove(p);
     }
 
     /**
-     * @return the peces
+     * @return the animal
      */
-    public final List<Pez> getPeces() {
-        return peces;
+    public final List<Animal> getAnimales() {
+        return animales;
     }
 
     /**
      * @param peces
-     *            the peces to set
+     *            the animal to set
      */
-    public final void setPeces(final List<Pez> peces) {
-        this.peces = peces;
+    public final void setPeces(final List<Animal> peces) {
+        this.animales = peces;
     }
 }
